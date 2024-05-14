@@ -8,6 +8,12 @@
 		left join Appuser A on A.appuserID = RP.createdBy
 </cfquery>
 
+
+<cfquery datasource="#request.dsnameReader#" name="qPropertySelect"> 
+    SELECT P.PropertyName, P.PropertyID
+    FROM  Property AS P
+</cfquery>
+
 <div class="row">
 	<div class="col-12">
 		<div class="page-title-box">
@@ -23,6 +29,7 @@
 	</div>
 </div>
 
+
 <div class="row">
 	<div class="col-md-12">
 		<div class="card">
@@ -31,65 +38,72 @@
 				<a href="index.cfm?area=RentPayment&action=RentPaymentInsert" style="width: auto;" class="btn btn-success custom-btn floatright">Add RentPayment</a>
 			</div>
 			<div class="card-body">
-
 				<div class="row">
-					<div class="col-12">
-						<cfoutput>
-							<div class="container table-responsive">
-								<table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
-									<thead>
-										<tr>
-											<th>ID</th>
-											<th> Tenant Name</th>
-											<th> Room Name</th>
-											<th> Payment Date</th>
-											<th> Payment Amount</th>
-											<th> Added by </th>
-											<th> Action</th>
-										</tr>
-									</thead>
-									<tbody>
-										<cfloop query="qRentPaymentSelect">
-											<tr>
-												<td>
-													#currentRow#
-												</td>
-												<td>
-													#qRentPaymentSelect.TenantName#
-												</td>
-												<td>
-													#qRentPaymentSelect.PropertyName#,
-													Room No. #qRentPaymentSelect.RoomName#
-												</td>
-												<td>
-													#DateFormat(qRentPaymentSelect.PaymentDate, "yyyy-mm-dd")#
-												</td>
-												<td>
-													#qRentPaymentSelect.PaymentAmount#
-												</td>
-												<td title="Added on #dateformat(qRentPaymentSelect.DateCreated, 'mmm-dd-yyyy')# @ #timeformat(qRentPaymentSelect.DateCreated, 'HH-mm-nn')#">
-													#qRentPaymentSelect.FirstName# 
-													#qRentPaymentSelect.LastName#
+                    <div class="col-12">
 
-													<cfif qRentPaymentSelect.dateCreated neq qRentPaymentSelect.dateLastUpdated>
-														<i style="color:red;" class="fa fa-info-circle" aria-hidden="true"
-														title="Updated on #dateformat(qRentPaymentSelect.DateLastUpdated, 'mmm-dd-yyyy')# @ #timeformat(qRentPaymentSelect.DateLastUpdated, 'HH-mm-nn')#"></i>
-													</cfif>
-																									
-												</td>
-												<td>
-													<a href="#cgi.script_name#?area=#url.area#&action=RentPaymentUpdate&RentPaymentID=#RentPaymentID#">Edit</a>
-												</td>
-											</tr>
-										</cfloop>
-									
-									</tbody>
-								</table>
-							</div>		
-						</cfoutput>
+                        <cfoutput>
+                            <div class="container">                                  
+                                <form id="formTransactionSelect" action="/partialIndex.cfm?area=RentPayment&action=RentPaymentSelectAction" method="post" target="formpost">
+                                    <div class="row">
 
+                                        <div class="col-md-4">
+                                            <div class="form-group row">
+                                                <label for="PropertyID" class="col-form-label col-lg-12 sholwlog-label datasent">Property</label>
+                                                <div class="col-lg-12">	
+                                                    <cfparam name="session.PropertyID"	 default="">										
+                                                    <select class="form-control required" name="PropertyID" id="PropertyID">
+                                                        <option value="">Show All</option>													
+                                                        <cfloop query="qPropertySelect">
+                                                            <option value="#qPropertySelect.PropertyID#" <cfif session.PropertyID eq qPropertySelect.PropertyID>selected</cfif>>#qPropertySelect.PropertyName#</option>
+                                                        </cfloop>
+                                                        
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>        
+                                            <cfset lastmonth= #dateadd("M", -1, now())#>
+
+                                        <!--- Date From --->
+                                        <div class="col-md-4">
+                                            <div class="form-group row">
+                                                <label for="dateFrom" class="col-form-label col-lg-12">Date From</label>
+                                                <div class="col-lg-12">
+                                                    <input class="form-control" id="dateFrom" name="dateFrom" type="text" value="#dateformat(lastmonth, "mm/dd/yyyy")#" aria-required="true">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--- Date To --->
+                                        <div class="col-md-4">
+                                            <div class="form-group row">
+                                                <label for="dateTo" class="col-form-label col-lg-12">Date To</label>
+                                                <div class="col-lg-12">
+                                                    <input class="form-control DateSent" id="dateTo" name="dateTo" type="text" value="#dateformat(Now(), "mm/dd/yyyy")#" aria-required="true">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <!--- Action Button --->
+                                        <div class="col-md-4" id="balance">
+                                        </div>
+                                        <div class="col-md-4" id="clientbalance">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group row">
+                                                <div class="col-lg-12 d-flex justify-content-end">
+                                                    <button type="submit" class="btn btn-purple waves-effect waves-light" style="min-width: 150px;">Search</button>
+                                        
+                                                </div>
+                                            </div>
+                                        </div>
+                                  </div>                               
+                              </form>
+                            </div>		
+                        </cfoutput>
+    
                    </div>
-				</div>
+                </div>
 
 				<!-- End #wizard-vertical -->
 			</div>
@@ -98,4 +112,45 @@
 		<!-- End card -->
 	</div>
 	<!-- end col -->
-</div>									
+</div>	
+
+<!--- alert goes here --->
+<div id="alert"></div>
+
+  <!---start search result here --->
+  <div id="searchResultContainer">					
+  
+</div>
+<!-- End Row -->
+<!--- end search result here --->
+
+<script>
+	function loadTable(){
+		var table = $('#Resultdatatable').dataTable( { aaSorting : [[0, 'desc']] } );
+	}
+  
+	window.addEventListener('load', (event) => {
+		  $('#dateFrom')
+			  .datepicker({
+				  format: 'mm/dd/yyyy',
+				  autoclose: true,
+				  orientation: 'bottom',
+				  immediateUpdates: true,
+				  todayHighlight: true, 
+				  todayBtn: true,
+			  });
+  
+		  $('#dateTo')
+			  .datepicker({
+				  format: 'mm/dd/yyyy',
+				  autoclose: true,
+				  orientation: 'bottom',
+				  immediateUpdates: true,
+				  todayHighlight: true, 
+				  todayBtn: true,
+			  });
+  
+		formTransactionSelect.submit();
+        
+	});
+  </script>
