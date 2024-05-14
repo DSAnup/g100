@@ -60,6 +60,11 @@
 							<a href="index.cfm?area=Transaction&action=TransactionSelect">
 							<i class="mdi mdi-equalizer"></i> Expense </a>
 						</li>
+						
+						<li class="has-submenu">
+							<a href="index.cfm?area=ProfitAndLoss&action=ProfitAndLossSelect">
+							<i class="mdi mdi-eye"></i> P&L </a>
+						</li>
 
                 <cfelse>
 
