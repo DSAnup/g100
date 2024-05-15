@@ -61,14 +61,17 @@
                                                 </div>
                                             </div>
                                         </div>        
-                                            <cfset lastmonth= #dateadd("M", -1, now())#>
+                                            <cfset currentDate = Now()>
+                                            <cfset currentYear = Year(currentDate)>
+                                            <cfset currentMonth = Month(currentDate)>
+                                            <cfset firstDayOfMonth = CreateDate(currentYear, currentMonth, 1)>
 
                                         <!--- Date From --->
                                         <div class="col-md-4">
                                             <div class="form-group row">
                                                 <label for="dateFrom" class="col-form-label col-lg-12">Date From</label>
                                                 <div class="col-lg-12">
-                                                    <input class="form-control" id="dateFrom" name="dateFrom" type="text" value="#dateformat(lastmonth, "mm/dd/yyyy")#" aria-required="true">
+                                                    <input class="form-control" id="dateFrom" name="dateFrom" type="text" value="#dateformat(firstDayOfMonth, "mm/dd/yyyy")#" aria-required="true">
                                                 </div>
                                             </div>
                                         </div>

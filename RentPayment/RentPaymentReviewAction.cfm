@@ -56,6 +56,10 @@
 
 				
 				left join @summaryTable rp on RP.RoomID = R.RoomID 
+			where 1=1
+				<cfif trim(form.PropertyID) neq "">
+					and p.PropertyID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.PropertyID#">
+				</cfif>
 				
 			group by PropertyName, roomName, MonthlyTarget
 			order by PropertyName, 
@@ -88,7 +92,13 @@
             		<div class="col-md-4 col-sm-4 col-8 text-right"> <h3 class="card-title">
 						<cfoutput>#dollarFormat(val(sum.total))# out of target #dollarFormat(val(sum.targetTotal))#
 								&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-								<span style="color:red;">#int(val(sum.total) / val(sum.targetTotal) * 100)#% Collected</span>
+								<span style="color:red;">
+									<cfif sum.total gte 0> 
+										#int(val(sum.total) / val(sum.targetTotal) * 100)#% Collected
+									<cfelse>
+										No Collection
+									</cfif>
+								</span>
 
 						</cfoutput></h3> </div>
             	</div>

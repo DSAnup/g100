@@ -1,6 +1,10 @@
 
 <cfparam name="session.rentReview.selectedMonthYear" default="#DateFormat(now(), 'mmm, yyyy')#">
 
+<cfquery datasource="#request.dsnameReader#" name="qPropertySelect"> 
+    SELECT P.PropertyName, P.PropertyID
+    FROM  Property AS P
+</cfquery>
 
 <div class="row">
 	<div class="col-12">
@@ -30,6 +34,18 @@
                         <cfoutput>
                             <form action="/gate.cfm?area=rentPayment&action=rentPaymentReviewAction" id="formPaymentReview" method="POST" target="formpost">
 								<div class="row">
+									<div class="col-md-3">
+										<div class="input-group ">
+											<label for="PropertyID" style="padding-right:10px;">Property</label>
+											<cfparam name="session.PropertyID"	 default="">										
+											<select class="form-control required" name="PropertyID" id="PropertyID" onchange="formPaymentReview.submit()">
+												<option value="">Show All</option>													
+												<cfloop query="qPropertySelect">
+													<option value="#qPropertySelect.PropertyID#" <cfif session.PropertyID eq qPropertySelect.PropertyID>selected</cfif>>#qPropertySelect.PropertyName#</option>
+												</cfloop>
+											</select>
+										</div>
+									</div>
 									<div class="col-md-3">
 										<div class="input-group date">
 											<input type="text" class="form-control" id="rentMonth" name="rentMonth" value="#session.rentReview.selectedMonthYear#" onchange="formPaymentReview.submit()">
